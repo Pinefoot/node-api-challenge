@@ -29,10 +29,14 @@ router.get('/:project_id/actions/:id', (req, res)=>{
 })
 
 //add action
-router.post('/:id/actions', (req, res)=>{
+router.post('/:id/actions', validateActionPost, validateDescriptionLength, (req, res)=>{
     Actions.insert(req.body)
     .then(action =>{
-        res.status(201).json(action)
+        if(action){
+        res.status(201).json(action)}
+        else{
+            res.status(404).json({message: 'Needs to have correct id'})
+        }
     }).catch(err =>{
         res.status(500).json({
             message: 'Something went wrong posting action to this id', err
@@ -52,7 +56,7 @@ router.delete('/:project_id/actions/:id',(req,res)=>{
 })
 
 //update actions
-router.put('/:project_id/actions/:id', (req, res)=>{
+router.put('/:project_id/actions/:id', validateActionPost, validateDescriptionLength, (req, res)=>{
     const id = req.params.id;
     const changes = req.body
 
@@ -73,8 +77,53 @@ router.put('/:project_id/actions/:id', (req, res)=>{
 })
     
 
+//middleware
+function validateActionPost(req, res, next) {
+    // do your magic!
+    if(req.body === null || req.body === ''){
+      res.status(400).json({message: 'missing post data'})
+    }else if( req.body.notes === null || req.body.notes === '' ||  req.body.description === "" || req.body.description === null){
+      res.status(400).json({message: 'missing required notes or description field'})
+    }else{
+      next();
+    }
+  }
 
 
+function validateDescriptionLength(req, res, next){
+    if(req.body === null || req.body === ''){
+        res.status(400).json({message: 'missing post data'})
+    }else if(req.body.description.length < 128){
+        res.status(401).json({message: 'description must be more 128 characters'})
+    }else{
+        next()
+    }
+}
+
+//   function validateProjectId(req, res, next) {
+//     // do your magic!
+//     let id = req.params.id
+    
+//     Projects.get( id)
+//     .then(pI =>{
+//       if(pI === req.params.project_id ){
+        
+        
+//         next();
+//       }else{
+//         res.status(400).json({message: 'invalid  id'})
+//       }
+//     }
+     
+//     ).catch(err =>{
+//       res.status(500).json({error: 'There was a problem finding the user ID'})
+//     })
+    
+    
+//     }
+
+
+  //req.body.description.length < 128 ||
 
 
 module.exports = router;

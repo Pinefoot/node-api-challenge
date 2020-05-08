@@ -79,16 +79,20 @@ router.post('/', validateProjectPost, (req, res)=>{
     })
 })
 
-router.post('/:id/actions', validateActionPost, (req, res)=>{
-    Actions.insert(req.body)
-    .then(action =>{
-        res.status(201).json(action)
-    }).catch(err =>{
-        res.status(500).json({
-            message: 'Something went wrong posting action to this id', err
-        })
-    })
-})
+// router.post('/:id/actions', validateActionPost, validateProjectId, (req, res)=>{
+//     Actions.insert(req.body)
+//     .then(action =>{
+//         if(action){
+//             res.status(201).json(action)}
+//             else{
+//                 res.status(404).json({message: 'Needs to have correct id'})
+//             }
+//     }).catch(err =>{
+//         res.status(500).json({
+//             message: 'Something went wrong posting action to this id', err
+//         })
+//     })
+// })
 
 
 //deleter!
@@ -106,7 +110,7 @@ router.delete('/:id', (req,res)=>{
 })
 
 //updater
-router.put('/:id', (req, res)=>{
+router.put('/:id', validateProjectPost, (req, res)=>{
     const id = req.params.id;
     const changes = req.body
     Projects.get(id)
@@ -141,16 +145,38 @@ function validateProjectPost(req, res, next) {
   
   }
 
-function validateActionPost(req, res, next) {
+  function validateActionPost(req, res, next) {
     // do your magic!
     if(req.body === null || req.body === ''){
       res.status(400).json({message: 'missing post data'})
-    }else if( req.body.text === null || req.body.text === ''){
-      res.status(400).json({message: 'missing required text field'})
+    }else if( req.body.notes === null || req.body.notes === '' ||  req.body.description === "" || req.body.description === null){
+      res.status(400).json({message: 'missing required notes or description field'})
     }else{
       next();
     }
   }
+
+//   function validateProjectId(req, res, next) {
+//     // do your magic!
+//     let id = req.params.id
+    
+//     Projects.get(id)
+//     .then(pI =>{
+//       if(pI === req.params.project_id ){
+        
+        
+//         next();
+//       }else{
+//         res.status(400).json({message: 'invalid  id'})
+//       }
+//     }
+     
+//     ).catch(err =>{
+//       res.status(500).json({error: 'There was a problem finding the user ID'})
+//     })
+    
+    
+//     }
 
 
 
