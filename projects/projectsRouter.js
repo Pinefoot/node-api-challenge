@@ -2,7 +2,10 @@ const express = require('express');
 const Projects = require('../data/helpers/projectModel');
 const Actions = require('../data/helpers/actionModel');
 const router = express.Router();
+//const actionsRouter = require('../actions/actionsRouter');
+const server = express();
 
+//server.use('/api/projects/:project_id/actions', actionsRouter);
 
 
 
@@ -35,22 +38,32 @@ router.get('/:id', (req, res)=>{
 
 })
 
-router.get('/:id/actions/:project_id', (req, res)=>{
-    Projects.getProjectActions(req.params.id)
-    .then(actions =>{
-        if(actions){
-            res.status(200).json(project)
-        }else{
-            res.status(404).json({
-                message: 'Projects actions not found'
+//getts actions
+router.get('/:project_id/actions', (req, res)=>{
+    Projects.getProjectActions(req.params.project_id)
+    
+    .then(projects =>{
+        
+        res.status(200).json(projects);
+    }).catch(err =>{
+        res.status(500).json({
+            message: 'Error retreving the projects'
+        })
+    })
+})
+
+
+
+router.get('/:project_id/actions/:id', (req, res)=>{
+    Actions.get(req.params.project_id)
+    .then(proj =>{
+        if(proj.id){
+            Projects.getProjectActions(req.params.id)
+            .then(success =>{
+                res.status(200).json(success)
             })
         }
-    }).catch(err => {
-        res.status(500).json({
-            message: 'You lose'
-        })
-    }
-    )
+    })
 })
 
 //posts
@@ -112,6 +125,8 @@ router.put('/:id', (req, res)=>{
 
 })
 
+
+//middleware for projects
 
 
 
