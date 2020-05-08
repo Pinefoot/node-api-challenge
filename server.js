@@ -9,7 +9,7 @@ server.use(express.json());
 
 //directing routes
 server.use('/api/projects', logger, projectsRouter);
-//server.use('/api/projects/:project_id/actions', logger, actionsRouter);
+server.use('/api/projects/', logger, actionsRouter);
 
 server.get('/', logger, (req, res)=>{
     res.send(`<h2>Sprinty McSprintenson</h2>`)
