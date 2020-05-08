@@ -8,7 +8,7 @@ const projectsRouter = require('./projects/projectsRouter');
 server.use(express.json());
 
 //directing routes
-server.use('/api/actions', logger, actionsRouter);
+// server.use('/api/actions', logger, actionsRouter);
 server.use('/api/projects', logger, projectsRouter);
 
 server.get('/', logger, (req, res)=>{
