@@ -68,7 +68,7 @@ router.get('/:id', (req, res)=>{
 
 
 //posts
-router.post('/', (req, res)=>{
+router.post('/', validateProjectPost, (req, res)=>{
     Projects.insert(req.body)
     .then(project =>{
         res.status(201).json(project);
@@ -79,7 +79,7 @@ router.post('/', (req, res)=>{
     })
 })
 
-router.post('/:id/actions', (req, res)=>{
+router.post('/:id/actions', validateActionPost, (req, res)=>{
     Actions.insert(req.body)
     .then(action =>{
         res.status(201).json(action)
@@ -128,6 +128,29 @@ router.put('/:id', (req, res)=>{
 
 
 //middleware for projects
+function validateProjectPost(req, res, next) {
+    // do your magic!
+    
+    if (req.body === null || req.body === ""){
+      res.status(400).json({message: 'missing user data'});
+    }else if(req.body.name === null || req.body.name === "" || req.body.description === null || req.body.description === ""){
+      res.status(400).json({message: 'missing required name or description field'})
+    }else{
+      next();
+    }
+  
+  }
+
+function validateActionPost(req, res, next) {
+    // do your magic!
+    if(req.body === null || req.body === ''){
+      res.status(400).json({message: 'missing post data'})
+    }else if( req.body.text === null || req.body.text === ''){
+      res.status(400).json({message: 'missing required text field'})
+    }else{
+      next();
+    }
+  }
 
 
 
